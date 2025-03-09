@@ -11,14 +11,42 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as AboutImport } from './routes/about'
+import { Route as R05RefsImport } from './routes/05-refs'
+import { Route as R04UseActionStateImport } from './routes/04-use-action-state'
+import { Route as R03UseTransitionImport } from './routes/03-use-transition'
+import { Route as R02UseOptimisticImport } from './routes/02-use-optimistic'
+import { Route as R01UseImport } from './routes/01-use'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
 
-const AboutRoute = AboutImport.update({
-  id: '/about',
-  path: '/about',
+const R05RefsRoute = R05RefsImport.update({
+  id: '/05-refs',
+  path: '/05-refs',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const R04UseActionStateRoute = R04UseActionStateImport.update({
+  id: '/04-use-action-state',
+  path: '/04-use-action-state',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const R03UseTransitionRoute = R03UseTransitionImport.update({
+  id: '/03-use-transition',
+  path: '/03-use-transition',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const R02UseOptimisticRoute = R02UseOptimisticImport.update({
+  id: '/02-use-optimistic',
+  path: '/02-use-optimistic',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const R01UseRoute = R01UseImport.update({
+  id: '/01-use',
+  path: '/01-use',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -39,11 +67,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutImport
+    '/01-use': {
+      id: '/01-use'
+      path: '/01-use'
+      fullPath: '/01-use'
+      preLoaderRoute: typeof R01UseImport
+      parentRoute: typeof rootRoute
+    }
+    '/02-use-optimistic': {
+      id: '/02-use-optimistic'
+      path: '/02-use-optimistic'
+      fullPath: '/02-use-optimistic'
+      preLoaderRoute: typeof R02UseOptimisticImport
+      parentRoute: typeof rootRoute
+    }
+    '/03-use-transition': {
+      id: '/03-use-transition'
+      path: '/03-use-transition'
+      fullPath: '/03-use-transition'
+      preLoaderRoute: typeof R03UseTransitionImport
+      parentRoute: typeof rootRoute
+    }
+    '/04-use-action-state': {
+      id: '/04-use-action-state'
+      path: '/04-use-action-state'
+      fullPath: '/04-use-action-state'
+      preLoaderRoute: typeof R04UseActionStateImport
+      parentRoute: typeof rootRoute
+    }
+    '/05-refs': {
+      id: '/05-refs'
+      path: '/05-refs'
+      fullPath: '/05-refs'
+      preLoaderRoute: typeof R05RefsImport
       parentRoute: typeof rootRoute
     }
   }
@@ -53,37 +109,76 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/01-use': typeof R01UseRoute
+  '/02-use-optimistic': typeof R02UseOptimisticRoute
+  '/03-use-transition': typeof R03UseTransitionRoute
+  '/04-use-action-state': typeof R04UseActionStateRoute
+  '/05-refs': typeof R05RefsRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/01-use': typeof R01UseRoute
+  '/02-use-optimistic': typeof R02UseOptimisticRoute
+  '/03-use-transition': typeof R03UseTransitionRoute
+  '/04-use-action-state': typeof R04UseActionStateRoute
+  '/05-refs': typeof R05RefsRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/01-use': typeof R01UseRoute
+  '/02-use-optimistic': typeof R02UseOptimisticRoute
+  '/03-use-transition': typeof R03UseTransitionRoute
+  '/04-use-action-state': typeof R04UseActionStateRoute
+  '/05-refs': typeof R05RefsRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths:
+    | '/'
+    | '/01-use'
+    | '/02-use-optimistic'
+    | '/03-use-transition'
+    | '/04-use-action-state'
+    | '/05-refs'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to:
+    | '/'
+    | '/01-use'
+    | '/02-use-optimistic'
+    | '/03-use-transition'
+    | '/04-use-action-state'
+    | '/05-refs'
+  id:
+    | '__root__'
+    | '/'
+    | '/01-use'
+    | '/02-use-optimistic'
+    | '/03-use-transition'
+    | '/04-use-action-state'
+    | '/05-refs'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
+  R01UseRoute: typeof R01UseRoute
+  R02UseOptimisticRoute: typeof R02UseOptimisticRoute
+  R03UseTransitionRoute: typeof R03UseTransitionRoute
+  R04UseActionStateRoute: typeof R04UseActionStateRoute
+  R05RefsRoute: typeof R05RefsRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
+  R01UseRoute: R01UseRoute,
+  R02UseOptimisticRoute: R02UseOptimisticRoute,
+  R03UseTransitionRoute: R03UseTransitionRoute,
+  R04UseActionStateRoute: R04UseActionStateRoute,
+  R05RefsRoute: R05RefsRoute,
 }
 
 export const routeTree = rootRoute
@@ -97,14 +192,30 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about"
+        "/01-use",
+        "/02-use-optimistic",
+        "/03-use-transition",
+        "/04-use-action-state",
+        "/05-refs"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/about": {
-      "filePath": "about.tsx"
+    "/01-use": {
+      "filePath": "01-use.tsx"
+    },
+    "/02-use-optimistic": {
+      "filePath": "02-use-optimistic.tsx"
+    },
+    "/03-use-transition": {
+      "filePath": "03-use-transition.tsx"
+    },
+    "/04-use-action-state": {
+      "filePath": "04-use-action-state.tsx"
+    },
+    "/05-refs": {
+      "filePath": "05-refs.tsx"
     }
   }
 }
