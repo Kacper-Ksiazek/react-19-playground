@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { UseCase1, UseCase2 } from '../use-cases/useTransition/'
+
+import { UseCase1 } from '../use-cases/useTransition/'
 
 export const Route = createFileRoute('/03-use-transition')({
   component: RouteComponent,
@@ -9,8 +9,7 @@ export const Route = createFileRoute('/03-use-transition')({
 function RouteComponent() {
   return (
     <>
-      {/* <UseCase1 />  */}
-      <UseCase2 />
+      <UseCase1 />
     </>
   )
 }
