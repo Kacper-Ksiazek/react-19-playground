@@ -11,8 +11,9 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as R05RefsImport } from './routes/05-refs'
-import { Route as R04UseActionStateImport } from './routes/04-use-action-state'
+import { Route as R06RefsImport } from './routes/06-refs'
+import { Route as R05UseActionStateImport } from './routes/05-use-action-state'
+import { Route as R04UseFormStatusImport } from './routes/04-use-form-status'
 import { Route as R03UseTransitionImport } from './routes/03-use-transition'
 import { Route as R02UseOptimisticImport } from './routes/02-use-optimistic'
 import { Route as R01UseImport } from './routes/01-use'
@@ -20,15 +21,21 @@ import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
 
-const R05RefsRoute = R05RefsImport.update({
-  id: '/05-refs',
-  path: '/05-refs',
+const R06RefsRoute = R06RefsImport.update({
+  id: '/06-refs',
+  path: '/06-refs',
   getParentRoute: () => rootRoute,
 } as any)
 
-const R04UseActionStateRoute = R04UseActionStateImport.update({
-  id: '/04-use-action-state',
-  path: '/04-use-action-state',
+const R05UseActionStateRoute = R05UseActionStateImport.update({
+  id: '/05-use-action-state',
+  path: '/05-use-action-state',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const R04UseFormStatusRoute = R04UseFormStatusImport.update({
+  id: '/04-use-form-status',
+  path: '/04-use-form-status',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -88,18 +95,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof R03UseTransitionImport
       parentRoute: typeof rootRoute
     }
-    '/04-use-action-state': {
-      id: '/04-use-action-state'
-      path: '/04-use-action-state'
-      fullPath: '/04-use-action-state'
-      preLoaderRoute: typeof R04UseActionStateImport
+    '/04-use-form-status': {
+      id: '/04-use-form-status'
+      path: '/04-use-form-status'
+      fullPath: '/04-use-form-status'
+      preLoaderRoute: typeof R04UseFormStatusImport
       parentRoute: typeof rootRoute
     }
-    '/05-refs': {
-      id: '/05-refs'
-      path: '/05-refs'
-      fullPath: '/05-refs'
-      preLoaderRoute: typeof R05RefsImport
+    '/05-use-action-state': {
+      id: '/05-use-action-state'
+      path: '/05-use-action-state'
+      fullPath: '/05-use-action-state'
+      preLoaderRoute: typeof R05UseActionStateImport
+      parentRoute: typeof rootRoute
+    }
+    '/06-refs': {
+      id: '/06-refs'
+      path: '/06-refs'
+      fullPath: '/06-refs'
+      preLoaderRoute: typeof R06RefsImport
       parentRoute: typeof rootRoute
     }
   }
@@ -112,8 +126,9 @@ export interface FileRoutesByFullPath {
   '/01-use': typeof R01UseRoute
   '/02-use-optimistic': typeof R02UseOptimisticRoute
   '/03-use-transition': typeof R03UseTransitionRoute
-  '/04-use-action-state': typeof R04UseActionStateRoute
-  '/05-refs': typeof R05RefsRoute
+  '/04-use-form-status': typeof R04UseFormStatusRoute
+  '/05-use-action-state': typeof R05UseActionStateRoute
+  '/06-refs': typeof R06RefsRoute
 }
 
 export interface FileRoutesByTo {
@@ -121,8 +136,9 @@ export interface FileRoutesByTo {
   '/01-use': typeof R01UseRoute
   '/02-use-optimistic': typeof R02UseOptimisticRoute
   '/03-use-transition': typeof R03UseTransitionRoute
-  '/04-use-action-state': typeof R04UseActionStateRoute
-  '/05-refs': typeof R05RefsRoute
+  '/04-use-form-status': typeof R04UseFormStatusRoute
+  '/05-use-action-state': typeof R05UseActionStateRoute
+  '/06-refs': typeof R06RefsRoute
 }
 
 export interface FileRoutesById {
@@ -131,8 +147,9 @@ export interface FileRoutesById {
   '/01-use': typeof R01UseRoute
   '/02-use-optimistic': typeof R02UseOptimisticRoute
   '/03-use-transition': typeof R03UseTransitionRoute
-  '/04-use-action-state': typeof R04UseActionStateRoute
-  '/05-refs': typeof R05RefsRoute
+  '/04-use-form-status': typeof R04UseFormStatusRoute
+  '/05-use-action-state': typeof R05UseActionStateRoute
+  '/06-refs': typeof R06RefsRoute
 }
 
 export interface FileRouteTypes {
@@ -142,24 +159,27 @@ export interface FileRouteTypes {
     | '/01-use'
     | '/02-use-optimistic'
     | '/03-use-transition'
-    | '/04-use-action-state'
-    | '/05-refs'
+    | '/04-use-form-status'
+    | '/05-use-action-state'
+    | '/06-refs'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/01-use'
     | '/02-use-optimistic'
     | '/03-use-transition'
-    | '/04-use-action-state'
-    | '/05-refs'
+    | '/04-use-form-status'
+    | '/05-use-action-state'
+    | '/06-refs'
   id:
     | '__root__'
     | '/'
     | '/01-use'
     | '/02-use-optimistic'
     | '/03-use-transition'
-    | '/04-use-action-state'
-    | '/05-refs'
+    | '/04-use-form-status'
+    | '/05-use-action-state'
+    | '/06-refs'
   fileRoutesById: FileRoutesById
 }
 
@@ -168,8 +188,9 @@ export interface RootRouteChildren {
   R01UseRoute: typeof R01UseRoute
   R02UseOptimisticRoute: typeof R02UseOptimisticRoute
   R03UseTransitionRoute: typeof R03UseTransitionRoute
-  R04UseActionStateRoute: typeof R04UseActionStateRoute
-  R05RefsRoute: typeof R05RefsRoute
+  R04UseFormStatusRoute: typeof R04UseFormStatusRoute
+  R05UseActionStateRoute: typeof R05UseActionStateRoute
+  R06RefsRoute: typeof R06RefsRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -177,8 +198,9 @@ const rootRouteChildren: RootRouteChildren = {
   R01UseRoute: R01UseRoute,
   R02UseOptimisticRoute: R02UseOptimisticRoute,
   R03UseTransitionRoute: R03UseTransitionRoute,
-  R04UseActionStateRoute: R04UseActionStateRoute,
-  R05RefsRoute: R05RefsRoute,
+  R04UseFormStatusRoute: R04UseFormStatusRoute,
+  R05UseActionStateRoute: R05UseActionStateRoute,
+  R06RefsRoute: R06RefsRoute,
 }
 
 export const routeTree = rootRoute
@@ -195,8 +217,9 @@ export const routeTree = rootRoute
         "/01-use",
         "/02-use-optimistic",
         "/03-use-transition",
-        "/04-use-action-state",
-        "/05-refs"
+        "/04-use-form-status",
+        "/05-use-action-state",
+        "/06-refs"
       ]
     },
     "/": {
@@ -211,11 +234,14 @@ export const routeTree = rootRoute
     "/03-use-transition": {
       "filePath": "03-use-transition.tsx"
     },
-    "/04-use-action-state": {
-      "filePath": "04-use-action-state.tsx"
+    "/04-use-form-status": {
+      "filePath": "04-use-form-status.tsx"
     },
-    "/05-refs": {
-      "filePath": "05-refs.tsx"
+    "/05-use-action-state": {
+      "filePath": "05-use-action-state.tsx"
+    },
+    "/06-refs": {
+      "filePath": "06-refs.tsx"
     }
   }
 }

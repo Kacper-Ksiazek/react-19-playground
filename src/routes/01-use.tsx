@@ -11,9 +11,9 @@ export const Route = createFileRoute('/01-use')({
 function RouteComponent() {
   return (
     <SimpleSampleContext value={{ bestJavascriptFramework: 'Svelte' }}>
-      {/* <UseCase1 /> */}
+      <UseCase1 />
       {/* <UseCase1 isStillLoading /> */}
-      <UseCase2 />
+      {/* <UseCase2 /> */}
     </SimpleSampleContext>
   )
 }

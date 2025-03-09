@@ -38,11 +38,15 @@ export const Route = createRootRoute({
           3. Hook: <Code>useTransition</Code>
         </NavButton>
 
-        <NavButton to='/04-use-action-state'>
-          4. Hook: <Code>useActionState</Code>
+        <NavButton to='/04-use-form-status'>
+          4. Hook: <Code>useFormStatus</Code>
         </NavButton>
 
-        <NavButton to='/05-refs'>5. Nowe refy</NavButton>
+        <NavButton to='/05-use-action-state'>
+          5. Hook: <Code>useActionState</Code>
+        </NavButton>
+
+        <NavButton to='/06-refs'>6. Nowe refy</NavButton>
       </nav>
 
       <main className='grow bg-white rounded-xl p-4'>
