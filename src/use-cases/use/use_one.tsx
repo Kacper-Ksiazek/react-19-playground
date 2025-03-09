@@ -15,7 +15,7 @@ export function UseCase1({ isStillLoading }: { isStillLoading?: boolean }) {
 
   return (
     <div>
-      Wartosc wyciagnieta z contextu:{' '}
+      Wartosc wyciagnieta z contextu:
       <code>{JSON.stringify(contextValue)}</code>
     </div>
   )

@@ -1,6 +1,6 @@
 import { use } from 'react'
 
-import { fetchData } from './_utils'
+import { fetchData } from '../../utils/'
 
 import { Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
