@@ -50,7 +50,7 @@ async function addToCartAPI(product: Product): Promise<CartItem> {
   }
 }
 
-async function updateQuantityAPI(cartId: string, quantity: number): Promise<void> {
+async function updateQuantityAPI(): Promise<void> {
   await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 800))
   
   if (Math.random() < 0.1) {
@@ -58,7 +58,7 @@ async function updateQuantityAPI(cartId: string, quantity: number): Promise<void
   }
 }
 
-async function removeFromCartAPI(cartId: string): Promise<void> {
+async function removeFromCartAPI(): Promise<void> {
   await new Promise(resolve => setTimeout(resolve, 400 + Math.random() * 600))
   
   if (Math.random() < 0.1) {
@@ -76,7 +76,7 @@ function optimisticCartReducer(state: OptimisticCartState, action: CartAction): 
   let newItems: CartItem[]
   
   switch (action.type) {
-    case 'add':
+    case 'add': {
       // Check if product already exists
       const existingItemIndex = state.items.findIndex(item => item.id === action.product.id)
       
@@ -94,6 +94,7 @@ function optimisticCartReducer(state: OptimisticCartState, action: CartAction): 
         }]
       }
       break
+    }
       
     case 'remove':
       newItems = state.items.filter(item => item.cartId !== action.cartId)
@@ -186,7 +187,7 @@ export function ShoppingCartExample() {
       addOptimistic({ type: 'updateQuantity', cartId, quantity: newQuantity })
       
       try {
-        await updateQuantityAPI(cartId, newQuantity)
+        await updateQuantityAPI()
         
         // Update actual state
         setActualCart(prev => {
@@ -219,7 +220,7 @@ export function ShoppingCartExample() {
       addOptimistic({ type: 'remove', cartId })
       
       try {
-        await removeFromCartAPI(cartId)
+        await removeFromCartAPI()
         
         // Update actual state
         setActualCart(prev => {

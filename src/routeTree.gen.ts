@@ -11,6 +11,8 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as R08PerformanceImport } from './routes/08-performance'
+import { Route as R07DocumentMetadataImport } from './routes/07-document-metadata'
 import { Route as R06RefsImport } from './routes/06-refs'
 import { Route as R05UseActionStateImport } from './routes/05-use-action-state'
 import { Route as R04UseFormStatusImport } from './routes/04-use-form-status'
@@ -20,6 +22,18 @@ import { Route as R01UseImport } from './routes/01-use'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
+
+const R08PerformanceRoute = R08PerformanceImport.update({
+  id: '/08-performance',
+  path: '/08-performance',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const R07DocumentMetadataRoute = R07DocumentMetadataImport.update({
+  id: '/07-document-metadata',
+  path: '/07-document-metadata',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const R06RefsRoute = R06RefsImport.update({
   id: '/06-refs',
@@ -116,6 +130,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof R06RefsImport
       parentRoute: typeof rootRoute
     }
+    '/07-document-metadata': {
+      id: '/07-document-metadata'
+      path: '/07-document-metadata'
+      fullPath: '/07-document-metadata'
+      preLoaderRoute: typeof R07DocumentMetadataImport
+      parentRoute: typeof rootRoute
+    }
+    '/08-performance': {
+      id: '/08-performance'
+      path: '/08-performance'
+      fullPath: '/08-performance'
+      preLoaderRoute: typeof R08PerformanceImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -129,6 +157,8 @@ export interface FileRoutesByFullPath {
   '/04-use-form-status': typeof R04UseFormStatusRoute
   '/05-use-action-state': typeof R05UseActionStateRoute
   '/06-refs': typeof R06RefsRoute
+  '/07-document-metadata': typeof R07DocumentMetadataRoute
+  '/08-performance': typeof R08PerformanceRoute
 }
 
 export interface FileRoutesByTo {
@@ -139,6 +169,8 @@ export interface FileRoutesByTo {
   '/04-use-form-status': typeof R04UseFormStatusRoute
   '/05-use-action-state': typeof R05UseActionStateRoute
   '/06-refs': typeof R06RefsRoute
+  '/07-document-metadata': typeof R07DocumentMetadataRoute
+  '/08-performance': typeof R08PerformanceRoute
 }
 
 export interface FileRoutesById {
@@ -150,6 +182,8 @@ export interface FileRoutesById {
   '/04-use-form-status': typeof R04UseFormStatusRoute
   '/05-use-action-state': typeof R05UseActionStateRoute
   '/06-refs': typeof R06RefsRoute
+  '/07-document-metadata': typeof R07DocumentMetadataRoute
+  '/08-performance': typeof R08PerformanceRoute
 }
 
 export interface FileRouteTypes {
@@ -162,6 +196,8 @@ export interface FileRouteTypes {
     | '/04-use-form-status'
     | '/05-use-action-state'
     | '/06-refs'
+    | '/07-document-metadata'
+    | '/08-performance'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -171,6 +207,8 @@ export interface FileRouteTypes {
     | '/04-use-form-status'
     | '/05-use-action-state'
     | '/06-refs'
+    | '/07-document-metadata'
+    | '/08-performance'
   id:
     | '__root__'
     | '/'
@@ -180,6 +218,8 @@ export interface FileRouteTypes {
     | '/04-use-form-status'
     | '/05-use-action-state'
     | '/06-refs'
+    | '/07-document-metadata'
+    | '/08-performance'
   fileRoutesById: FileRoutesById
 }
 
@@ -191,6 +231,8 @@ export interface RootRouteChildren {
   R04UseFormStatusRoute: typeof R04UseFormStatusRoute
   R05UseActionStateRoute: typeof R05UseActionStateRoute
   R06RefsRoute: typeof R06RefsRoute
+  R07DocumentMetadataRoute: typeof R07DocumentMetadataRoute
+  R08PerformanceRoute: typeof R08PerformanceRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -201,6 +243,8 @@ const rootRouteChildren: RootRouteChildren = {
   R04UseFormStatusRoute: R04UseFormStatusRoute,
   R05UseActionStateRoute: R05UseActionStateRoute,
   R06RefsRoute: R06RefsRoute,
+  R07DocumentMetadataRoute: R07DocumentMetadataRoute,
+  R08PerformanceRoute: R08PerformanceRoute,
 }
 
 export const routeTree = rootRoute
@@ -219,7 +263,9 @@ export const routeTree = rootRoute
         "/03-use-transition",
         "/04-use-form-status",
         "/05-use-action-state",
-        "/06-refs"
+        "/06-refs",
+        "/07-document-metadata",
+        "/08-performance"
       ]
     },
     "/": {
@@ -242,6 +288,12 @@ export const routeTree = rootRoute
     },
     "/06-refs": {
       "filePath": "06-refs.tsx"
+    },
+    "/07-document-metadata": {
+      "filePath": "07-document-metadata.tsx"
+    },
+    "/08-performance": {
+      "filePath": "08-performance.tsx"
     }
   }
 }

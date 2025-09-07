@@ -52,7 +52,7 @@ async function handleNextStep(
   await new Promise(resolve => setTimeout(resolve, 500))
 
   const errors: Record<string, string> = {}
-  let newFormData = { ...prevState.formData }
+  const newFormData = { ...prevState.formData }
 
   if (prevState.step === 1) {
     const firstName = formData.get('firstName') as string

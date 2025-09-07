@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, useDeferredValue, useTransition, startTransition, useMemo, useCallback, memo } from 'react'
+import { useState, useDeferredValue, useTransition, useMemo, memo } from 'react'
 
 export const Route = createFileRoute('/08-performance')({
   component: RouteComponent,
@@ -18,7 +18,7 @@ function expensiveComputation(value: string, complexity: number): string[] {
       results.push(`Performance result ${i}: ${value}`)
     }
     // Simulate more work
-    Math.random() * Math.random()
+    void (Math.random() * Math.random())
   }
   
   return results.slice(0, 20) // Limit results

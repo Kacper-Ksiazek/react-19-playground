@@ -19,21 +19,35 @@ interface UserProfile {
   followers: number
 }
 
-// Simple cache implementation
-const cache = new Map<string, Promise<any>>()
+// Enhanced cache implementation with error handling
+const cache = new Map<string, Promise<unknown>>()
 
 function fetchWithCache<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
   if (!cache.has(key)) {
-    cache.set(key, fetcher())
+    console.log(`🔄 Creating new cache entry for: ${key}`)
+    const promise = fetcher()
+    
+    // Cache both success and failure - no retry logic
+    promise.catch((error) => {
+      console.log(`❌ Caching failed response for: ${key}`, error.message)
+    })
+    
+    cache.set(key, promise)
+  } else {
+    console.log(`✅ Using cached entry for: ${key}`)
   }
-  return cache.get(key)!
+  return cache.get(key)! as Promise<T>
 }
 
 // Weather API simulation
 async function fetchWeatherData(location: string): Promise<WeatherData> {
   await new Promise(resolve => setTimeout(resolve, 1500))
   
-  if (Math.random() < 0.15) {
+  const shouldFail = Math.random() < 0.4
+  console.log(`🌤️ Weather API for ${location}: shouldFail=${shouldFail}`)
+  
+  if (shouldFail) {
+    console.error(`❌ Weather API failed for ${location}`)
     throw new Error(`Nie udało się pobrać danych pogodowych dla ${location}`)
   }
 
@@ -52,7 +66,11 @@ async function fetchWeatherData(location: string): Promise<WeatherData> {
 async function fetchUserProfile(userId: number): Promise<UserProfile> {
   await new Promise(resolve => setTimeout(resolve, 1200))
   
-  if (Math.random() < 0.1) {
+  const shouldFail = Math.random() < 0.35
+  console.log(`👤 User API for ${userId}: shouldFail=${shouldFail}`)
+  
+  if (shouldFail) {
+    console.error(`❌ User API failed for ${userId}`)
     throw new Error(`Nie udało się pobrać profilu użytkownika ${userId}`)
   }
 
@@ -111,7 +129,8 @@ function UserDashboard({ userId, location }: { userId: number; location: string 
       <h3 className="text-lg font-semibold">Dashboard użytkownika</h3>
       <div className="grid md:grid-cols-2 gap-4">
         <ErrorBoundary
-          fallback={<div className="p-4 bg-red-100 text-red-800 rounded-md">Błąd ładowania profilu</div>}
+          key={`user-${userId}`}
+          fallback={<div className="p-4 bg-red-100 text-red-800 rounded-md">Błąd ładowania profilu użytkownika {userId}</div>}
         >
           <Suspense fallback={<div className="p-4 bg-gray-100 animate-pulse rounded-md">Ładowanie profilu...</div>}>
             <UserProfileCard userId={userId} />
@@ -119,7 +138,8 @@ function UserDashboard({ userId, location }: { userId: number; location: string 
         </ErrorBoundary>
 
         <ErrorBoundary
-          fallback={<div className="p-4 bg-red-100 text-red-800 rounded-md">Błąd ładowania pogody</div>}
+          key={`weather-${location}`}
+          fallback={<div className="p-4 bg-red-100 text-red-800 rounded-md">Błąd ładowania pogody dla {location}</div>}
         >
           <Suspense fallback={<div className="p-4 bg-gray-100 animate-pulse rounded-md">Ładowanie pogody...</div>}>
             <WeatherWidget location={location} />
@@ -194,10 +214,11 @@ export function ComplexUseExamples() {
           <h4 className="font-semibold text-yellow-800 mb-2">Funkcje demonstrowane:</h4>
           <ul className="text-sm text-yellow-700 space-y-1">
             <li>• <strong>Równoległe ładowanie:</strong> Profile użytkownika i pogoda ładują się jednocześnie</li>
-            <li>• <strong>Cache'owanie:</strong> Dane są cache'owane aby unikać ponownych zapytań</li>
+            <li>• <strong>Persistent cache:</strong> Zarówno sukces jak i błąd są cache'owane na stałe</li>
             <li>• <strong>Obsługa błędów:</strong> ErrorBoundary wyłapuje błędy z poszczególnych komponentów</li>
+            <li>• <strong>Trwałe błędy:</strong> Raz nieudane zapytanie pozostaje nieudane (bez retry)</li>
             <li>• <strong>Suspense:</strong> Każdy komponent może mieć własny stan ładowania</li>
-            <li>• <strong>Ponowne wykorzystanie:</strong> Cache pozwala na błyskawiczne przełączanie między wcześniej ładowanymi danymi</li>
+            <li>• <strong>Cache consistency:</strong> Identyczne zapytania zawsze zwracają ten sam wynik</li>
           </ul>
         </div>
 

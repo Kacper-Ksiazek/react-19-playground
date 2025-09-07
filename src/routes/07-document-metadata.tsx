@@ -204,7 +204,7 @@ function DynamicMetadataExample() {
               {['homepage', 'blog', 'product'].map((type) => (
                 <button
                   key={type}
-                  onClick={() => setPageType(type as any)}
+                  onClick={() => setPageType(type as 'homepage' | 'blog' | 'product')}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     pageType === type
                       ? 'bg-blue-600 text-white'
@@ -226,7 +226,7 @@ function DynamicMetadataExample() {
               {['light', 'dark'].map((themeOption) => (
                 <button
                   key={themeOption}
-                  onClick={() => setTheme(themeOption as any)}
+                  onClick={() => setTheme(themeOption as 'light' | 'dark')}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     theme === themeOption
                       ? 'bg-purple-600 text-white'

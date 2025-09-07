@@ -173,10 +173,11 @@ function RefAsPropExample() {
   const handleCounterAction = (action: 'increment' | 'decrement' | 'reset' | 'getValue') => {
     if (counterRef.current) {
       switch (action) {
-        case 'increment':
+        case 'increment': {
           counterRef.current.increment()
           addAction('Counter: increment')
           break
+        }
         case 'decrement':
           counterRef.current.decrement()
           addAction('Counter: decrement')
@@ -185,10 +186,11 @@ function RefAsPropExample() {
           counterRef.current.reset()
           addAction('Counter: reset')
           break
-        case 'getValue':
+        case 'getValue': {
           const value = counterRef.current.getValue()
           addAction(`Counter: getValue = ${value}`)
           break
+        }
       }
     }
   }
