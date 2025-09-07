@@ -1,4 +1,5 @@
-import { useFormStatus, useActionState } from 'react'
+import { useActionState } from 'react'
+import { useFormStatus } from 'react-dom'
 
 interface FileUploadState {
   success: boolean
@@ -13,11 +14,11 @@ const initialState: FileUploadState = {
 }
 
 async function fileUploadAction(
-  prevState: FileUploadState,
+  _prevState: FileUploadState,
   formData: FormData
 ): Promise<FileUploadState> {
   const file = formData.get('file') as File
-  
+
   if (!file || file.size === 0) {
     return {
       success: false,
@@ -59,6 +60,24 @@ async function fileUploadAction(
   }
 }
 
+function FormStatusDebug() {
+  const { pending, data, method, action } = useFormStatus()
+
+  return (
+    <div className="space-y-2 flex flex-col">
+      <div className="mt-4 p-3 bg-gray-50 rounded-md">
+        <h4 className="font-semibold text-gray-700 mb-2">useFormStatus debug:</h4>
+        <div className="text-sm text-gray-600 space-y-1">
+          <p><strong>pending:</strong> {pending.toString()}</p>
+          <p><strong>method:</strong> {method || 'null'}</p>
+          <p><strong>action:</strong> {action ? 'function' : 'null'}</p>
+          <p><strong>data keys:</strong> {data ? Array.from(data.keys()).join(', ') : 'null'}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function SubmitButton() {
   const { pending, data, method, action } = useFormStatus()
 
@@ -72,11 +91,10 @@ function SubmitButton() {
       <button
         type="submit"
         disabled={pending}
-        className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-          pending
+        className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${pending
             ? 'bg-gray-400 cursor-not-allowed text-gray-600'
             : 'bg-blue-600 hover:bg-blue-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500'
-        }`}
+          }`}
       >
         {pending ? 'Przesyłanie...' : 'Wyślij plik'}
       </button>
@@ -96,23 +114,18 @@ function SubmitButton() {
       )}
 
       {/* Debug informacji z useFormStatus */}
-      <div className="mt-4 p-3 bg-gray-50 rounded-md">
-        <h4 className="font-semibold text-gray-700 mb-2">useFormStatus debug:</h4>
-        <div className="text-sm text-gray-600 space-y-1">
-          <p><strong>pending:</strong> {pending.toString()}</p>
-          <p><strong>method:</strong> {method || 'null'}</p>
-          <p><strong>action:</strong> {action || 'null'}</p>
-          <p><strong>data keys:</strong> {data ? Array.from(data.keys()).join(', ') : 'null'}</p>
-          {file && (
+      {file && (
+        <div className="mt-4 p-3 bg-gray-50 rounded-md">
+          <div className="text-sm text-gray-600 space-y-1">
             <div>
               <p><strong>Wybrany plik:</strong></p>
               <p>• Nazwa: {file.name}</p>
               <p>• Rozmiar: {Math.round(file.size / 1024)} KB</p>
               <p>• Typ: {file.type}</p>
             </div>
-          )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
@@ -123,7 +136,7 @@ export function FileUploadForm() {
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Przesyłanie plików</h2>
-      
+
       <form action={action} className="space-y-4">
         <div>
           <label htmlFor="file" className="block text-sm font-medium text-gray-700 mb-2">
@@ -143,6 +156,8 @@ export function FileUploadForm() {
 
         <SubmitButton />
 
+        <FormStatusDebug />
+
         {state.error && (
           <div className="p-3 rounded-md bg-red-100 text-red-800 border border-red-200">
             {state.error}
@@ -161,7 +176,7 @@ export function FileUploadForm() {
       </form>
 
       <div className="mt-6 p-4 bg-gray-50 rounded-md">
-        <h3 className="font-semibold text-gray-700 mb-2">Stan akcji:</h3>
+        <h3 className="font-semibold text-gray-700 mb-2">Stan akcji ( useActionState ):</h3>
         <pre className="text-xs text-gray-600 overflow-x-auto">
           {JSON.stringify(state, null, 2)}
         </pre>

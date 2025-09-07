@@ -1,4 +1,6 @@
 import { useOptimistic, useTransition, useState } from 'react'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 interface Product {
   id: number
@@ -35,11 +37,11 @@ const mockProducts: Product[] = [
   { id: 6, name: 'Magic Keyboard', price: 599, image: '⌨️', category: 'Akcesoria' },
 ]
 
-// Simulated API calls with random delays and failures
-async function addToCartAPI(product: Product): Promise<CartItem> {
+// Simulated API calls with configurable failure rates
+async function addToCartAPI(product: Product, failureRate: number): Promise<CartItem> {
   await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 1200))
   
-  if (Math.random() < 0.15) {
+  if (Math.random() < (failureRate / 100)) {
     throw new Error(`Nie udało się dodać ${product.name} do koszyka. Produkt może być niedostępny.`)
   }
 
@@ -50,18 +52,18 @@ async function addToCartAPI(product: Product): Promise<CartItem> {
   }
 }
 
-async function updateQuantityAPI(): Promise<void> {
+async function updateQuantityAPI(failureRate: number): Promise<void> {
   await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 800))
   
-  if (Math.random() < 0.1) {
+  if (Math.random() < (failureRate / 100)) {
     throw new Error('Nie udało się zaktualizować ilości')
   }
 }
 
-async function removeFromCartAPI(): Promise<void> {
+async function removeFromCartAPI(failureRate: number): Promise<void> {
   await new Promise(resolve => setTimeout(resolve, 400 + Math.random() * 600))
   
-  if (Math.random() < 0.1) {
+  if (Math.random() < (failureRate / 100)) {
     throw new Error('Nie udało się usunąć produktu z koszyka')
   }
 }
@@ -133,23 +135,15 @@ export function ShoppingCartExample() {
   )
   
   const [isPending, startTransition] = useTransition()
-  const [error, setError] = useState<string | null>(null)
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
-
-  const clearMessages = () => {
-    setError(null)
-    setSuccessMessage(null)
-  }
+  const [failureRate, setFailureRate] = useState(35) // Default 35% failure rate
 
   const addToCart = async (product: Product) => {
-    clearMessages()
-    
     startTransition(async () => {
       // Optimistic update
       addOptimistic({ type: 'add', product })
       
       try {
-        const cartItem = await addToCartAPI(product)
+        const cartItem = await addToCartAPI(product, failureRate)
         
         // Update actual state with server response
         setActualCart(prev => {
@@ -171,23 +165,28 @@ export function ShoppingCartExample() {
           return { items: newItems, total, itemCount }
         })
         
-        setSuccessMessage(`${product.name} został dodany do koszyka!`)
+        toast.success(`✅ ${product.name} został dodany do koszyka!`, {
+          position: "bottom-right",
+          autoClose: 3000,
+        })
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Wystąpił błąd')
+        const errorMsg = err instanceof Error ? err.message : 'Wystąpił błąd'
+        toast.error(`❌ ${errorMsg}`, {
+          position: "bottom-right",
+          autoClose: 4000,
+        })
         // Optimistic update will be reverted automatically
       }
     })
   }
 
   const updateQuantity = async (cartId: string, newQuantity: number) => {
-    clearMessages()
-    
     startTransition(async () => {
       // Optimistic update
       addOptimistic({ type: 'updateQuantity', cartId, quantity: newQuantity })
       
       try {
-        await updateQuantityAPI()
+        await updateQuantityAPI(failureRate)
         
         // Update actual state
         setActualCart(prev => {
@@ -202,25 +201,33 @@ export function ShoppingCartExample() {
         })
         
         if (newQuantity === 0) {
-          setSuccessMessage('Produkt został usunięty z koszyka')
+          toast.success('🗑️ Produkt został usunięty z koszyka', {
+            position: "bottom-right",
+            autoClose: 2000,
+          })
         } else {
-          setSuccessMessage('Ilość została zaktualizowana')
+          toast.success('🔄 Ilość została zaktualizowana', {
+            position: "bottom-right",
+            autoClose: 2000,
+          })
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Wystąpił błąd')
+        const errorMsg = err instanceof Error ? err.message : 'Wystąpił błąd'
+        toast.error(`❌ ${errorMsg}`, {
+          position: "bottom-right",
+          autoClose: 4000,
+        })
       }
     })
   }
 
   const removeFromCart = async (cartId: string) => {
-    clearMessages()
-    
     startTransition(async () => {
       // Optimistic update
       addOptimistic({ type: 'remove', cartId })
       
       try {
-        await removeFromCartAPI()
+        await removeFromCartAPI(failureRate)
         
         // Update actual state
         setActualCart(prev => {
@@ -229,31 +236,55 @@ export function ShoppingCartExample() {
           return { items: newItems, total, itemCount }
         })
         
-        setSuccessMessage('Produkt został usunięty z koszyka')
+        toast.success('🗑️ Produkt został usunięty z koszyka', {
+          position: "bottom-right",
+          autoClose: 2000,
+        })
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Wystąpił błąd')
+        const errorMsg = err instanceof Error ? err.message : 'Wystąpił błąd'
+        toast.error(`❌ ${errorMsg}`, {
+          position: "bottom-right",
+          autoClose: 4000,
+        })
       }
     })
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-6 relative">
       <h2 className="text-3xl font-bold text-center mb-8">Sklep z useOptimistic</h2>
       
-      {/* Status Messages */}
-      {error && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md flex justify-between items-center">
-          <span>{error}</span>
-          <button onClick={clearMessages} className="text-red-500 hover:text-red-700 font-bold">×</button>
+      {/* Failure Rate Control - Floating */}
+      <div className="fixed top-4 right-4 z-50 bg-white border-2 border-gray-300 rounded-lg p-4 shadow-lg">
+        <div className="flex items-center space-x-3">
+          <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
+            Błędy API:
+          </label>
+          <div className="flex items-center space-x-2">
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={failureRate}
+              onChange={(e) => setFailureRate(Number(e.target.value))}
+              className="w-24 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              style={{
+                background: `linear-gradient(to right, #10b981 0%, #10b981 ${100-failureRate}%, #ef4444 ${100-failureRate}%, #ef4444 100%)`
+              }}
+            />
+            <span className="text-sm font-mono text-gray-900 min-w-[40px] text-right">
+              {failureRate}%
+            </span>
+          </div>
         </div>
-      )}
-      
-      {successMessage && (
-        <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md flex justify-between items-center">
-          <span>{successMessage}</span>
-          <button onClick={clearMessages} className="text-green-500 hover:text-green-700 font-bold">×</button>
+        <div className="text-xs text-gray-500 mt-1">
+          {failureRate === 0 && '✅ Wszystkie operacje będą udane'}
+          {failureRate > 0 && failureRate <= 20 && '🟢 Rzadkie błędy'}
+          {failureRate > 20 && failureRate <= 50 && '🟡 Umiarkowane błędy'}
+          {failureRate > 50 && failureRate <= 80 && '🟠 Częste błędy'}
+          {failureRate > 80 && '🔴 Bardzo częste błędy'}
         </div>
-      )}
+      </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Products */}
@@ -379,10 +410,25 @@ export function ShoppingCartExample() {
           <li>• <strong>Optymistyczne aktualizacje:</strong> Koszyk aktualizuje się natychmiast</li>
           <li>• <strong>Automatyczny rollback:</strong> Jeśli operacja się nie powiedzie, zmiany są cofane</li>
           <li>• <strong>Równoległe operacje:</strong> Możliwość wykonywania wielu operacji jednocześnie</li>
-          <li>• <strong>Obsługa błędów:</strong> Graceful handling z komunikatami użytkownika</li>
-          <li>• <strong>Realistic delays:</strong> Symulacja rzeczywistych opóźnień API (~15% failure rate)</li>
+          <li>• <strong>Konfigurowalny failure rate:</strong> Użyj suwaka w prawym górnym rogu (domyślnie {failureRate}%)</li>
+          <li>• <strong>Toast notifications:</strong> React-toastify dla eleganckiej obsługi komunikatów</li>
+          <li>• <strong>Realistic delays:</strong> Symulacja rzeczywistych opóźnień API (400-2000ms)</li>
         </ul>
       </div>
+
+      {/* Toast Container */}
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   )
 }

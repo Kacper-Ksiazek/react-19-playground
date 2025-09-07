@@ -2,8 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { SimpleSampleContext } from '../context/SimpleSampleContext'
 import { useState } from 'react'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { UseCase1, UseCase2, ComplexUseExamples, ConditionalUseExample } from '../use-cases/use'
+import { UseCase1, ComplexUseExamples, ConditionalUseExample } from '../use-cases/use'
 
 export const Route = createFileRoute('/01-use')({
   component: RouteComponent,

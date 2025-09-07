@@ -1,4 +1,5 @@
-import { useFormStatus, useActionState } from 'react'
+import { useActionState } from 'react'
+import { useFormStatus } from 'react-dom'
 
 interface SearchResult {
   id: number
@@ -32,6 +33,8 @@ const mockData: SearchResult[] = [
   { id: 6, title: 'React hooks deep dive', description: 'Szczegółowy przewodnik po hookach', category: 'Frontend' },
   { id: 7, title: 'GraphQL podstawy', description: 'Wprowadzenie do GraphQL', category: 'API' },
   { id: 8, title: 'Docker dla deweloperów', description: 'Konteneryzacja aplikacji', category: 'DevOps' },
+  { id: 9, title: 'React 19 - nowe funkcje', description: 'Przewodnik po najnowszych funkcjach React 19', category: 'Frontend' },
+  {id: 10, title: "Najwieksze osiągnięcie ludzkości - Svelte", description: "Svelte to absolutnie najlepsza rzecz zaraz po wynalezieniu koła", category: "Frontend"}
 ]
 
 async function searchAction(
@@ -90,9 +93,8 @@ function SearchButton() {
     <div className="space-y-2">
       <button
         type="submit"
-        disabled={pending || !query?.trim()}
         className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-          pending || !query?.trim()
+          pending 
             ? 'bg-gray-400 cursor-not-allowed text-gray-600'
             : 'bg-blue-600 hover:bg-blue-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500'
         }`}
@@ -221,7 +223,7 @@ export function SearchForm() {
       <SearchResults state={state} />
 
       <div className="mt-6 p-4 bg-gray-50 rounded-md">
-        <h3 className="font-semibold text-gray-700 mb-2">Stan wyszukiwania:</h3>
+        <h3 className="font-semibold text-gray-700 mb-2">Stan wyszukiwania ( useActionState ):</h3>
         <pre className="text-xs text-gray-600 overflow-x-auto">
           {JSON.stringify(
             { 

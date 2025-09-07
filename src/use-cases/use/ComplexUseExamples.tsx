@@ -40,11 +40,11 @@ function fetchWithCache<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
 }
 
 // Weather API simulation
-async function fetchWeatherData(location: string): Promise<WeatherData> {
+async function fetchWeatherData(location: string, failureRate: number = 40): Promise<WeatherData> {
   await new Promise(resolve => setTimeout(resolve, 1500))
   
-  const shouldFail = Math.random() < 0.4
-  console.log(`🌤️ Weather API for ${location}: shouldFail=${shouldFail}`)
+  const shouldFail = Math.random() < (failureRate / 100)
+  console.log(`🌤️ Weather API for ${location}: shouldFail=${shouldFail} (rate: ${failureRate}%)`)
   
   if (shouldFail) {
     console.error(`❌ Weather API failed for ${location}`)
@@ -63,11 +63,11 @@ async function fetchWeatherData(location: string): Promise<WeatherData> {
 }
 
 // User profile API simulation
-async function fetchUserProfile(userId: number): Promise<UserProfile> {
+async function fetchUserProfile(userId: number, failureRate: number = 35): Promise<UserProfile> {
   await new Promise(resolve => setTimeout(resolve, 1200))
   
-  const shouldFail = Math.random() < 0.35
-  console.log(`👤 User API for ${userId}: shouldFail=${shouldFail}`)
+  const shouldFail = Math.random() < (failureRate / 100)
+  console.log(`👤 User API for ${userId}: shouldFail=${shouldFail} (rate: ${failureRate}%)`)
   
   if (shouldFail) {
     console.error(`❌ User API failed for ${userId}`)
@@ -85,8 +85,8 @@ async function fetchUserProfile(userId: number): Promise<UserProfile> {
 }
 
 // Weather component using 'use' with cache
-function WeatherWidget({ location }: { location: string }) {
-  const weatherData = use(fetchWithCache(`weather-${location}`, () => fetchWeatherData(location)))
+function WeatherWidget({ location, failureRate }: { location: string; failureRate: number }) {
+  const weatherData = use(fetchWithCache(`weather-${location}-${failureRate}`, () => fetchWeatherData(location, failureRate)))
 
   return (
     <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
@@ -102,8 +102,8 @@ function WeatherWidget({ location }: { location: string }) {
 }
 
 // User profile component
-function UserProfileCard({ userId }: { userId: number }) {
-  const profile = use(fetchWithCache(`user-${userId}`, () => fetchUserProfile(userId)))
+function UserProfileCard({ userId, failureRate }: { userId: number; failureRate: number }) {
+  const profile = use(fetchWithCache(`user-${userId}-${failureRate}`, () => fetchUserProfile(userId, failureRate)))
 
   return (
     <div className="p-4 bg-green-50 border border-green-200 rounded-md">
@@ -123,7 +123,7 @@ function UserProfileCard({ userId }: { userId: number }) {
 }
 
 // Combined dashboard component
-function UserDashboard({ userId, location }: { userId: number; location: string }) {
+function UserDashboard({ userId, location, failureRate }: { userId: number; location: string; failureRate: number }) {
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Dashboard użytkownika</h3>
@@ -133,16 +133,16 @@ function UserDashboard({ userId, location }: { userId: number; location: string 
           fallback={<div className="p-4 bg-red-100 text-red-800 rounded-md">Błąd ładowania profilu użytkownika {userId}</div>}
         >
           <Suspense fallback={<div className="p-4 bg-gray-100 animate-pulse rounded-md">Ładowanie profilu...</div>}>
-            <UserProfileCard userId={userId} />
+            <UserProfileCard userId={userId} failureRate={failureRate} />
           </Suspense>
         </ErrorBoundary>
 
         <ErrorBoundary
-          key={`weather-${location}`}
+          key={`weather-${location}-${failureRate}`}
           fallback={<div className="p-4 bg-red-100 text-red-800 rounded-md">Błąd ładowania pogody dla {location}</div>}
         >
           <Suspense fallback={<div className="p-4 bg-gray-100 animate-pulse rounded-md">Ładowanie pogody...</div>}>
-            <WeatherWidget location={location} />
+            <WeatherWidget location={location} failureRate={failureRate} />
           </Suspense>
         </ErrorBoundary>
       </div>
@@ -154,6 +154,7 @@ function UserDashboard({ userId, location }: { userId: number; location: string 
 export function ComplexUseExamples() {
   const [selectedUser, setSelectedUser] = useState(1)
   const [selectedLocation, setSelectedLocation] = useState('Warszawa')
+  const [failureRate, setFailureRate] = useState(40) // Default 40% failure rate
 
   const clearCache = () => {
     cache.clear()
@@ -162,11 +163,43 @@ export function ComplexUseExamples() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md relative">
       <h2 className="text-2xl font-bold mb-4">Zaawansowane przykłady 'use'</h2>
       <p className="text-gray-600 mb-6">
         Demonstracja równoległego ładowania danych z różnych źródeł, cache'owania i obsługi błędów.
       </p>
+
+      {/* Failure Rate Control - Floating */}
+      <div className="fixed top-4 right-4 z-50 bg-white border-2 border-gray-300 rounded-lg p-4 shadow-lg">
+        <div className="flex items-center space-x-3">
+          <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
+            Błędy API:
+          </label>
+          <div className="flex items-center space-x-2">
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={failureRate}
+              onChange={(e) => setFailureRate(Number(e.target.value))}
+              className="w-24 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              style={{
+                background: `linear-gradient(to right, #10b981 0%, #10b981 ${100-failureRate}%, #ef4444 ${100-failureRate}%, #ef4444 100%)`
+              }}
+            />
+            <span className="text-sm font-mono text-gray-900 min-w-[40px] text-right">
+              {failureRate}%
+            </span>
+          </div>
+        </div>
+        <div className="text-xs text-gray-500 mt-1">
+          {failureRate === 0 && '✅ Wszystkie API będą działać'}
+          {failureRate > 0 && failureRate <= 20 && '🟢 Rzadkie błędy'}
+          {failureRate > 20 && failureRate <= 50 && '🟡 Umiarkowane błędy'}
+          {failureRate > 50 && failureRate <= 80 && '🟠 Częste błędy'}
+          {failureRate > 80 && '🔴 Bardzo częste błędy'}
+        </div>
+      </div>
 
       <div className="space-y-6">
         <div className="flex flex-wrap gap-4 items-center">
@@ -208,7 +241,7 @@ export function ComplexUseExamples() {
           </button>
         </div>
 
-        <UserDashboard userId={selectedUser} location={selectedLocation} />
+        <UserDashboard userId={selectedUser} location={selectedLocation} failureRate={failureRate} />
 
         <div className="bg-yellow-50 p-4 border border-yellow-200 rounded-md">
           <h4 className="font-semibold text-yellow-800 mb-2">Funkcje demonstrowane:</h4>
@@ -238,6 +271,7 @@ export function ComplexUseExamples() {
 export function ConditionalUseExample() {
   const [enabledWidgets, setEnabledWidgets] = useState<string[]>(['weather'])
   const [locations] = useState(['Warszawa', 'Kraków', 'Gdańsk'])
+  const [failureRate, setFailureRate] = useState(30)
 
   const toggleWidget = (widget: string) => {
     setEnabledWidgets(prev => 
@@ -253,6 +287,38 @@ export function ConditionalUseExample() {
       <p className="text-gray-600 mb-6">
         Przykład użycia 'use' w pętlach i warunkach - React 19 pozwala na elastyczne użycie hooków.
       </p>
+
+      {/* Failure Rate Control - Floating */}
+      <div className="fixed top-4 right-4 z-50 bg-white border-2 border-gray-300 rounded-lg p-4 shadow-lg">
+        <div className="flex items-center space-x-3">
+          <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
+            Błędy API:
+          </label>
+          <div className="flex items-center space-x-2">
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={failureRate}
+              onChange={(e) => setFailureRate(Number(e.target.value))}
+              className="w-24 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              style={{
+                background: `linear-gradient(to right, #10b981 0%, #10b981 ${100-failureRate}%, #ef4444 ${100-failureRate}%, #ef4444 100%)`
+              }}
+            />
+            <span className="text-sm font-mono text-gray-900 min-w-[40px] text-right">
+              {failureRate}%
+            </span>
+          </div>
+        </div>
+        <div className="text-xs text-gray-500 mt-1">
+          {failureRate === 0 && '✅ Wszystkie API będą działać'}
+          {failureRate > 0 && failureRate <= 20 && '🟢 Rzadkie błędy'}
+          {failureRate > 20 && failureRate <= 50 && '🟡 Umiarkowane błędy'}
+          {failureRate > 50 && failureRate <= 80 && '🟠 Częste błędy'}
+          {failureRate > 80 && '🔴 Bardzo częste błędy'}
+        </div>
+      </div>
 
       <div className="space-y-6">
         <div>
@@ -286,11 +352,11 @@ export function ConditionalUseExample() {
               <div className="grid md:grid-cols-3 gap-4">
                 {locations.map(location => (
                   <ErrorBoundary
-                    key={location}
+                    key={`weather-${location}-${failureRate}`}
                     fallback={<div className="p-4 bg-red-100 text-red-800 rounded-md">Błąd: {location}</div>}
                   >
                     <Suspense fallback={<div className="p-4 bg-gray-100 animate-pulse rounded-md">Ładowanie {location}...</div>}>
-                      <WeatherWidget location={location} />
+                      <WeatherWidget location={location} failureRate={failureRate} />
                     </Suspense>
                   </ErrorBoundary>
                 ))}
@@ -304,11 +370,11 @@ export function ConditionalUseExample() {
               <div className="grid md:grid-cols-2 gap-4">
                 {[1, 2, 3, 4].map(userId => (
                   <ErrorBoundary
-                    key={userId}
+                    key={`user-${userId}-${failureRate}`}
                     fallback={<div className="p-4 bg-red-100 text-red-800 rounded-md">Błąd: Użytkownik {userId}</div>}
                   >
                     <Suspense fallback={<div className="p-4 bg-gray-100 animate-pulse rounded-md">Ładowanie użytkownika...</div>}>
-                      <UserProfileCard userId={userId} />
+                      <UserProfileCard userId={userId} failureRate={failureRate} />
                     </Suspense>
                   </ErrorBoundary>
                 ))}

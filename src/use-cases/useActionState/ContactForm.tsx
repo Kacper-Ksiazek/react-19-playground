@@ -16,7 +16,7 @@ const initialState: ContactFormState = {
 }
 
 async function contactFormAction(
-  prevState: ContactFormState,
+  _prevState: ContactFormState,
   formData: FormData
 ): Promise<ContactFormState> {
   const name = formData.get('name') as string

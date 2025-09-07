@@ -9,7 +9,7 @@ const AppLayout: React.FC = () => {
       <header>
         <nav>
           {/* Navigation links */}
-          <Link to='/'>Home</Link> | <Link to='/about'>About</Link>
+          <Link to='/'>Home</Link>
         </nav>
       </header>
       <main>

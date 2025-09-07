@@ -64,7 +64,6 @@ function RouteComponent() {
           <li>• <strong>method</strong> - Metoda HTTP używana do przesyłania (GET, POST, etc.)</li>
           <li>• <strong>action</strong> - URL lub funkcja akcji do której formularz jest przesyłany</li>
           <li>• <strong>Tylko w komponentach potomnych</strong> - Hook musi być używany w komponencie dziecku elementu form</li>
-          <li>• <strong>Real-time access</strong> - Dostęp do aktualnych danych formularza w trakcie wprowadzania</li>
         </ul>
         
         <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
