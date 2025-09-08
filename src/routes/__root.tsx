@@ -47,6 +47,14 @@ export const Route = createRootRoute({
         </NavButton>
 
         <NavButton to='/06-refs'>6. Nowe refy</NavButton>
+
+        <NavButton to='/07-document-metadata'>
+          7. Document Metadata
+        </NavButton>
+
+        <NavButton to='/08-performance'>
+          8. Performance & Benchmarks
+        </NavButton>
       </nav>
 
       <main className='grow bg-white rounded-xl p-4'>
